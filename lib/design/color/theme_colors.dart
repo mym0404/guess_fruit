@@ -31,6 +31,11 @@ class C {
   static const shadow = Color(0xFF000000);
   static const surfaceTint = Color(0xFFAAC7FF);
 
+  // base
+
+  static const white = Colors.white;
+  static const black = Colors.black;
+
   // semantic
 
   static const transparent = Colors.transparent;

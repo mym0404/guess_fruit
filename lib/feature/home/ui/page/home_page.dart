@@ -242,14 +242,18 @@ class ChatItem extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       key: ValueKey(chat.created),
       children: [
-        CircleAvatar(
-          radius: 16,
-          child: chat.isFromUser
-              ? Assets.images.logo.image()
-              : Icon(
-                  MdiIcons.robot,
-                  size: 32,
-                ),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(999),
+          child: CircleAvatar(
+            radius: 16,
+            backgroundColor: C.black,
+            child: chat.isFromUser
+                ? Assets.images.logo.image()
+                : Icon(
+                    MdiIcons.robot,
+                    size: 20,
+                  ),
+          ),
         ),
         const Gap(20),
         Expanded(
