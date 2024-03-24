@@ -14,7 +14,7 @@ void main() async {
 
 Future<void> bootStrap() async {
   await dotenv.load(fileName: '.env');
-  Gemini.init(apiKey: dotenv.env['GEMINI_KEY']!);
+  Gemini.init(apiKey: dotenv.env['GEMINI_KEY']!, enableDebugging: true);
   await registerSingletons();
   _registerErrorHandler();
   runApp(const ProviderScope(child: BootStrapApp()));

@@ -1,5 +1,5 @@
-name: boilerplate
-description: A boilerplate for Flutter
+name: gemini_sample
+description: Flutter Gemini Sample
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -30,8 +30,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_localizations:
-    sdk: flutter
 
   cupertino_icons: ^1.0.6
   flutter_native_splash: ^2.4.0
@@ -40,8 +38,8 @@ dependencies:
   get_it: ^7.6.7
   watch_it: ^1.4.1
   logger: ^2.2.0
-  intl: ^0.18.1
-  collection: ^1.17.2
+  intl: ^0.19.0
+  collection: ^1.18.0
   freezed_annotation: ^2.4.1
   shared_preferences: ^2.2.2
   json_annotation: ^4.8.1
