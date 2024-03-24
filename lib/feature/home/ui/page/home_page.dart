@@ -3,27 +3,12 @@ import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../../assets/assets.gen.dart';
 import '../../../../export.dart';
 import '../../../core/hook/use_mount.dart';
 import '../../../core/widget/background.dart';
 import '../../data/schema/chat_schema.dart';
-
-part 'home_page.g.dart';
-
-@riverpod
-class Counter extends _$Counter {
-  @override
-  int build() {
-    return 0;
-  }
-
-  void increase() {
-    state++;
-  }
-}
 
 final ai = Gemini.instance;
 
