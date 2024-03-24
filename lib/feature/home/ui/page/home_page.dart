@@ -30,6 +30,14 @@ class HomePage extends HookWidget {
     final isGenerating = useState(false);
     final scroller = useScrollController();
     final generateViewKey = useRef(GlobalKey());
+    final anim =
+        useAnimationController(duration: const Duration(milliseconds: 1500));
+    final scaleValue = Tween(begin: 1.0, end: 1.05)
+        .animate(CurvedAnimation(parent: anim, curve: Curves.easeInOutCubic));
+
+    useMount(() {
+      anim.repeat(reverse: true);
+    });
 
     void scrollToEnd() {
       doOnLayout(() {
@@ -142,13 +150,25 @@ class HomePage extends HookWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(MdiIcons.lightbulbOnOutline, size: 64),
+                    AnimatedBuilder(
+                      animation: scaleValue,
+                      builder: (context, _) {
+                        return Opacity(
+                          opacity: scaleValue.value - 0.15,
+                          child: Transform.scale(
+                            scale: scaleValue.value,
+                            child: Icon(MdiIcons.lightbulbOnOutline, size: 64),
+                          ),
+                        );
+                      },
+                    ),
                     const Gap(16),
                     Text('Ask AI Anything', style: TS.h1.bold),
                     const Gap(8),
                     Text(
                       '''
-"Write a bedtime story for a 6 year old boy who likes football"
+- How can we enjoy happy leisure time? 
+- What is Google Gemini?
                       ''',
                       textAlign: TextAlign.center,
                       style: TS.c(C.sub1),
@@ -380,14 +400,14 @@ class BottomPanel extends HookWidget {
     return Column(
       children: [
         AnimatedContainer(
-          duration: const Duration(milliseconds: 300),
+          duration: const Duration(milliseconds: 150),
           padding: const EdgeInsets.all(1),
           decoration: BoxDecoration(
             borderRadius: 8.radius,
             gradient: LinearGradient(
               colors: [
-                !focusNode.hasFocus ? C.grey300 : C.primary,
-                !focusNode.hasFocus ? C.grey500 : C.error
+                !focusNode.hasFocus ? C.grey800 : C.primary,
+                !focusNode.hasFocus ? C.grey800 : C.error
               ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
