@@ -4,5 +4,4 @@ flutter/bin/flutter doctor
 flutter/bin/flutter clean
 flutter/bin/flutter config --enable-web
 flutter/bin/flutter pub get
-echo "" > .env
 #flutter/bin/dart run build_runner build -d
