@@ -442,7 +442,7 @@ class BottomPanel extends HookWidget {
               onPressed: () {
                 launchUrlString('https://github.com/mym0404/guess_fruit');
               },
-              label: Text('Github'),
+              label: const Text('Github'),
               icon: Icon(MdiIcons.github, size: 16),
               style: ButtonStyle(
                   foregroundColor: MaterialStateProperty.all(C.white)),
