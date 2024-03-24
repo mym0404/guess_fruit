@@ -158,7 +158,6 @@ class HomePage extends HookWidget {
                       GeminiResponseTypeView(
                         key: generateViewKey.value,
                         builder: (context, child, response, loading) {
-                          log.i(response);
                           doOnLayout(() {
                             scrollToEnd();
                           });
@@ -276,8 +275,9 @@ class ChatItem extends StatelessWidget {
               : FullW(
                   child: MarkdownBody(
                     selectable: true,
-                    data: chat.content,
+                    data: chat.content ?? '',
                     fitContent: true,
+                    shrinkWrap: true,
                     onTapLink: (text, href, title) async {
                       if (href == null) return;
                       final uri = Uri.parse(href);
@@ -301,9 +301,9 @@ class HighlightBuilder extends MarkdownElementBuilder {
 
   @override
   Widget visitElementAfter(md.Element element, TextStyle? preferredStyle) {
-    final textStyle = GoogleFonts.nanumGothicCoding(
+    final textStyle = GoogleFonts.ubuntuMono(
       backgroundColor: Colors.transparent,
-      fontWeight: FontWeight.w600,
+      fontWeight: FontWeight.w400,
     );
 
     var language = 'java';
