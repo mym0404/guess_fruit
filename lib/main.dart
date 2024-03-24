@@ -35,7 +35,7 @@ Future<void> bootStrap() async {
   await dotenv.load(fileName: '.env');
   Gemini.init(
       apiKey: (dotenv.env['GEMINI_KEY'] ?? ''),
-      enableDebugging: kDebugMode,
+      enableDebugging: false,
       safetySettings: safetySettings);
 
   await registerSingletons();

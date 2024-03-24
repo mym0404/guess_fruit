@@ -1,9 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
+import 'package:flutter_highlighter/flutter_highlighter.dart';
+import 'package:flutter_highlighter/theme_map.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:markdown/markdown.dart' as md;
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../assets/assets.gen.dart';
 import '../../../../export.dart';
@@ -23,6 +28,7 @@ class HomePage extends HookConsumerWidget {
     final chats = useState(<ChatSchema>[]);
     final isGenerating = useState(false);
     final scroller = useScrollController();
+    final generateViewKey = useRef(GlobalKey());
 
     void scrollToEnd() {
       doOnLayout(() {
@@ -40,23 +46,16 @@ class HomePage extends HookConsumerWidget {
           safetySettings: safetySettings);
     }
 
-    void handleError(bool isLastChatExist) {
+    void handleError() {
       final errorChat = ChatSchema(
           created: DateTime.now(),
           content: 'Unknown Error Occured',
           isFromUser: false,
           isError: true);
-      if (isLastChatExist) {
-        chats.value = [
-          ...chats.value.sublist(0, chats.value.length - 1),
-          errorChat,
-        ];
-      } else {
-        chats.value = [
-          ...chats.value,
-          errorChat,
-        ];
-      }
+      chats.value = [
+        ...chats.value.sublist(0, chats.value.length - 1),
+        errorChat,
+      ];
     }
 
     final subscription = useRef<StreamSubscription<dynamic>?>(null);
@@ -71,39 +70,34 @@ class HomePage extends HookConsumerWidget {
           created: DateTime.now(),
           content: text,
           isFromUser: true,
-        )
+        ),
+        ChatSchema(
+          created: DateTime.now().add(1.milliseconds),
+          content: '',
+          isFromUser: false,
+        ),
       ];
       scrollToEnd();
 
       subscription.value?.cancel();
       subscription.value = ai
           .streamChat(chats.value
+              .whereNotIndexed((index, element) =>
+                  index == chats.value.length - 1 && !element.isFromUser)
               .map(
                 (e) => Content(parts: [Parts(text: e.content)], role: e.role),
               )
               .toList())
           .listen(
         (event) {
-          var isLastChatExist =
-              chats.value.isNotEmpty && !chats.value.last.isFromUser;
           if (event.output?.isNotEmpty == true) {
-            if (isLastChatExist) {
-              chats.value = [
-                ...chats.value.sublist(0, chats.value.length - 1),
-                chats.value.last.copyWith(
-                    content: chats.value.last.content + (event.output ?? '')),
-              ];
-            } else {
-              chats.value = [
-                ...chats.value,
-                ChatSchema(
-                    created: DateTime.now(),
-                    content: (event.output ?? ''),
-                    isFromUser: false)
-              ];
-            }
+            chats.value = [
+              ...chats.value.sublist(0, chats.value.length - 1),
+              chats.value.last.copyWith(
+                  content: chats.value.last.content + (event.output ?? '')),
+            ];
           } else {
-            handleError(isLastChatExist);
+            handleError();
           }
           scrollToEnd();
         },
@@ -112,7 +106,7 @@ class HomePage extends HookConsumerWidget {
           scrollToEnd();
         },
         onError: (dynamic e) {
-          handleError(chats.value.isNotEmpty && !chats.value.last.isFromUser);
+          handleError();
           isGenerating.value = false;
           log.e('Error', error: e);
         },
@@ -122,6 +116,8 @@ class HomePage extends HookConsumerWidget {
     useUnmount(() {
       subscription.value?.cancel();
     });
+
+    log.i(chats.value.length);
 
     return Scaffold(
       body: Stack(
@@ -153,59 +149,47 @@ class HomePage extends HookConsumerWidget {
             )
           else
             ListView.separated(
-              itemCount: chats.value.length + (isGenerating.value ? 1 : 0),
+              itemCount: chats.value.length,
               itemBuilder: (context, index) {
-                if (index == chats.value.length) {
-                  return Center(
-                    child: ShaderMask(
-                      child: const CupertinoActivityIndicator(),
-                      shaderCallback: (bounds) {
-                        return LinearGradient(colors: [C.red400, C.blue400])
-                            .createShader(bounds);
-                      },
-                    ),
-                  );
-                } else {
-                  final chat = chats.value[index];
+                var isLastItem = index == chats.value.length - 1;
 
-                  return Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CircleAvatar(
-                        radius: 16,
-                        child: chat.isFromUser
-                            ? Assets.images.logo.image()
-                            : Icon(
-                                MdiIcons.robot,
-                                size: 32,
-                              ),
+                return Column(
+                  key: ValueKey(index),
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (isLastItem)
+                      GeminiResponseTypeView(
+                        key: generateViewKey.value,
+                        builder: (context, child, response, loading) {
+                          log.i(response);
+                          doOnLayout(() {
+                            scrollToEnd();
+                          });
+                          return ChatItem(
+                            item: chats.value[index]
+                                .copyWith(content: response ?? ''),
+                            onReset: reset,
+                          );
+                        },
+                      )
+                    else
+                      ChatItem(
+                        item: chats.value[index],
+                        onReset: reset,
                       ),
-                      const Gap(20),
-                      Expanded(
-                          child: Pt(
-                        6,
-                        child: chat.isError
-                            ? Column(
-                                children: [
-                                  Text(
-                                    chat.content,
-                                    style: TS.c(C.error),
-                                  ),
-                                  TextButton(
-                                      onPressed: () {
-                                        reset();
-                                      },
-                                      child: const Text('Reset')),
-                                ],
-                              )
-                            : MarkdownBody(
-                                selectable: true,
-                                data: chat.content,
-                              ),
-                      ))
-                    ],
-                  );
-                }
+                    if (isLastItem && isGenerating.value)
+                      Transform.translate(
+                        offset: const Offset(0, -20),
+                        child: ShaderMask(
+                          child: const CupertinoActivityIndicator(),
+                          shaderCallback: (bounds) {
+                            return LinearGradient(colors: [C.red400, C.blue400])
+                                .createShader(bounds);
+                          },
+                        ),
+                      ),
+                  ],
+                );
               },
               separatorBuilder: (context, index) => const Gap(16),
               controller: scroller,
@@ -241,6 +225,111 @@ class HomePage extends HookConsumerWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class ChatItem extends StatelessWidget {
+  const ChatItem({
+    super.key,
+    required ChatSchema item,
+    required this.onReset,
+  }) : chat = item;
+
+  final ChatSchema chat;
+  final VC onReset;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      key: ValueKey(chat.created),
+      children: [
+        CircleAvatar(
+          radius: 16,
+          child: chat.isFromUser
+              ? Assets.images.logo.image()
+              : Icon(
+                  MdiIcons.robot,
+                  size: 32,
+                ),
+        ),
+        const Gap(20),
+        Expanded(
+            child: Pt(
+          6,
+          child: chat.isError
+              ? Column(
+                  children: [
+                    Text(
+                      chat.content,
+                      style: TS.c(C.error),
+                    ),
+                    TextButton(
+                        onPressed: () {
+                          onReset();
+                        },
+                        child: const Text('Reset')),
+                  ],
+                )
+              : FullW(
+                  child: MarkdownBody(
+                    selectable: true,
+                    data: chat.content,
+                    fitContent: true,
+                    onTapLink: (text, href, title) async {
+                      if (href == null) return;
+                      final uri = Uri.parse(href);
+                      if (await canLaunchUrl(uri)) launchUrl(uri);
+                    },
+                    builders: {
+                      'code': HighlightBuilder(),
+                    },
+                    styleSheet: MarkdownStyleSheet(
+                        codeblockDecoration: const BoxDecoration()),
+                  ),
+                ),
+        ))
+      ],
+    );
+  }
+}
+
+class HighlightBuilder extends MarkdownElementBuilder {
+  HighlightBuilder();
+
+  @override
+  Widget visitElementAfter(md.Element element, TextStyle? preferredStyle) {
+    final textStyle = GoogleFonts.nanumGothicCoding(
+      backgroundColor: Colors.transparent,
+      fontWeight: FontWeight.w600,
+    );
+
+    var language = 'java';
+    final pattern = RegExp(r'^language-(.+)$');
+    if (element.attributes['class'] != null &&
+        pattern.hasMatch(element.attributes['class']!)) {
+      language =
+          pattern.firstMatch(element.attributes['class']!)!.group(1) ?? 'java';
+    }
+
+    bool isInline = element.attributes['class'] == null;
+
+    if (isInline) {
+      return Text(element.textContent);
+    }
+
+    return HighlightView(
+      element.textContent.trim(),
+      language: language,
+      theme: themeMap['dracula']!,
+      padding: isInline
+          ? const EdgeInsets.symmetric(
+              vertical: 4,
+              horizontal: 6,
+            )
+          : const EdgeInsets.all(12),
+      textStyle: textStyle,
     );
   }
 }
