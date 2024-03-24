@@ -117,8 +117,6 @@ class HomePage extends HookConsumerWidget {
       subscription.value?.cancel();
     });
 
-    log.i(chats.value.length);
-
     return Scaffold(
       body: Stack(
         children: [
