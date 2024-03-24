@@ -1,8 +1,0 @@
-{
-  "_locale": "en",
-  "homeTitle": "Welcome",
-  "homeBody": "Welcome to Flutter Boilerplate project\nThis can be your very good start point.",
-  "homeNavigateDetailButton": "Go Detail",
-  "detailTitle": "Detail",
-  "settingTitle": "Setting"
-}

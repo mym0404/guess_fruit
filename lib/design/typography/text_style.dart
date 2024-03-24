@@ -98,6 +98,7 @@ class TS {
 
   static const bold = TextStyle(fontWeight: FontWeight.bold);
   static const medium = TextStyle(fontWeight: FontWeight.w500);
+  static TextStyle c(Color c) => TextStyle(color: c);
 }
 
 extension TextStyleExtension on TextStyle {
