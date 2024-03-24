@@ -8,6 +8,7 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:markdown/markdown.dart' as md;
 import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 import '../../../../assets/assets.gen.dart';
 import '../../../../export.dart';
@@ -211,7 +212,7 @@ class HomePage extends HookWidget {
             ),
           ),
           Positioned(
-            bottom: 48,
+            bottom: 24,
             left: 24,
             right: 24,
             child: BottomPanel(
@@ -364,63 +365,92 @@ class BottomPanel extends HookWidget {
       focusNode.requestFocus();
     }
 
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
-      padding: const EdgeInsets.all(1),
-      decoration: BoxDecoration(
-        borderRadius: 8.radius,
-        gradient: LinearGradient(
-          colors: [
-            !focusNode.hasFocus ? C.grey300 : C.primary,
-            !focusNode.hasFocus ? C.grey500 : C.error
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-      ),
-      child: ClipRRect(
-        borderRadius: 8.radius,
-        child: Container(
-          padding: const EdgeInsets.all(7),
-          decoration: const BoxDecoration(color: C.surface),
-          child: Stack(
-            children: [
-              Px(
-                8,
-                child: TextField(
-                  readOnly: readOnly,
-                  controller: text,
-                  onSubmitted: (_) => submit(),
-                  focusNode: focusNode,
-                  decoration: const InputDecoration(
-                      border: InputBorder.none,
-                      isDense: true,
-                      focusColor: Colors.red,
-                      hintText: 'Ask AI anything...'),
-                  cursorColor: C.text,
-                  style: TS.b3,
-                ),
+    return Column(
+      children: [
+        AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
+          padding: const EdgeInsets.all(1),
+          decoration: BoxDecoration(
+            borderRadius: 8.radius,
+            gradient: LinearGradient(
+              colors: [
+                !focusNode.hasFocus ? C.grey300 : C.primary,
+                !focusNode.hasFocus ? C.grey500 : C.error
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+          child: ClipRRect(
+            borderRadius: 8.radius,
+            child: Container(
+              padding: const EdgeInsets.all(7),
+              decoration: const BoxDecoration(color: C.surface),
+              child: Stack(
+                children: [
+                  Px(
+                    8,
+                    child: TextField(
+                      readOnly: readOnly,
+                      controller: text,
+                      onSubmitted: (_) => submit(),
+                      focusNode: focusNode,
+                      decoration: const InputDecoration(
+                          border: InputBorder.none,
+                          isDense: true,
+                          focusColor: Colors.red,
+                          hintText: 'Ask AI anything...'),
+                      cursorColor: C.text,
+                      style: TS.b3,
+                    ),
+                  ),
+                  PosRight(
+                    right: 12,
+                    child: ValueListenableBuilder(
+                      valueListenable: text,
+                      builder: (context, newText, _) {
+                        return IconButton(
+                          icon: Icon(
+                              readOnly ? MdiIcons.circle : MdiIcons.sendOutline,
+                              size: 16),
+                          style: const ButtonStyle(
+                              padding:
+                                  MaterialStatePropertyAll(EdgeInsets.zero)),
+                          onPressed: newText.text.isNotEmpty ? submit : null,
+                        );
+                      },
+                    ),
+                  )
+                ],
               ),
-              PosRight(
-                right: 12,
-                child: ValueListenableBuilder(
-                  valueListenable: text,
-                  builder: (context, newText, _) {
-                    return IconButton(
-                      icon: Icon(
-                          readOnly ? MdiIcons.circle : MdiIcons.sendOutline,
-                          size: 16),
-                      style: const ButtonStyle(
-                          padding: MaterialStatePropertyAll(EdgeInsets.zero)),
-                      onPressed: newText.text.isNotEmpty ? submit : null,
-                    );
-                  },
-                ),
-              )
-            ],
+            ),
           ),
         ),
-      ),
+        const Gap(12),
+        Row(
+          children: [
+            TextButton.icon(
+              onPressed: () {
+                launchUrlString('https://github.com/mym0404/guess_fruit');
+              },
+              label: Text('Github'),
+              icon: Icon(MdiIcons.github, size: 16),
+              style: ButtonStyle(
+                  foregroundColor: MaterialStateProperty.all(C.white)),
+            ),
+            const Gap(0),
+            TextButton(
+              onPressed: () {
+                launchUrlString('https://mjstudio.net');
+              },
+              style: ButtonStyle(
+                foregroundColor: MaterialStateProperty.all(C.white),
+              ),
+              child: Text('© ${DateTime.now().year} MJ Studio'),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
