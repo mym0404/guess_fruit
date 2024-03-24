@@ -14,7 +14,27 @@ void main() async {
 
 Future<void> bootStrap() async {
   await dotenv.load(fileName: '.env');
-  Gemini.init(apiKey: (dotenv.env['GEMINI_KEY'] ?? ''), enableDebugging: true);
+  Gemini.init(
+      apiKey: (dotenv.env['GEMINI_KEY'] ?? ''),
+      enableDebugging: kDebugMode,
+      safetySettings: [
+        SafetySetting(
+          category: SafetyCategory.dangerous,
+          threshold: SafetyThreshold.blockNone,
+        ),
+        SafetySetting(
+          category: SafetyCategory.harassment,
+          threshold: SafetyThreshold.blockNone,
+        ),
+        SafetySetting(
+          category: SafetyCategory.hateSpeech,
+          threshold: SafetyThreshold.blockNone,
+        ),
+        SafetySetting(
+          category: SafetyCategory.sexuallyExplicit,
+          threshold: SafetyThreshold.blockNone,
+        ),
+      ]);
   await registerSingletons();
   _registerErrorHandler();
   runApp(const ProviderScope(child: BootStrapApp()));
