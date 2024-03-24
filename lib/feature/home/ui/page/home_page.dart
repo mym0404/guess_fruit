@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
@@ -6,6 +7,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../../assets/assets.gen.dart';
 import '../../../../export.dart';
+import '../../../../main.dart';
 import '../../../core/hook/use_mount.dart';
 import '../../../core/widget/background.dart';
 import '../../data/schema/chat_schema.dart';
@@ -33,6 +35,9 @@ class HomePage extends HookConsumerWidget {
       isStarted.value = false;
       chats.value = [];
       isGenerating.value = false;
+      Gemini.reInitialize(
+          apiKey: (dotenv.env['GEMINI_KEY'] ?? ''),
+          safetySettings: safetySettings);
     }
 
     void handleError(bool isLastChatExist) {

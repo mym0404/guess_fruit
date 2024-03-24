@@ -370,10 +370,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_gemini
-      sha256: "1e106f4644d1bc3b1806c9fbf0b6399873b16041d61ea12e3fc229f23f3aa067"
+      sha256: "05dbce3924cd8eabbb143bd9c35aedf737c0fe66c3b420c184f54cc8d3ecca15"
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.3"
+    version: "2.0.4-dev.1"
   flutter_gen_core:
     dependency: transitive
     description:
