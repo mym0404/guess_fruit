@@ -69,6 +69,9 @@ class HomePage extends HookWidget {
         }
         return;
       }
+      if (text.isEmpty) {
+        return;
+      }
 
       isStarted.value = true;
       isGenerating.value = true;
