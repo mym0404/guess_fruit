@@ -1,0 +1,75 @@
+# This file configures the analyzer, which statically analyzes Dart code to
+# check for errors, warnings, and lints.
+#
+# The issues identified by the analyzer are surfaced in the UI of Dart-enabled
+# IDEs (https://dart.dev/tools#ides-and-editors). The analyzer can also be
+# invoked from the command line by running `flutter analyze`.
+
+# The following line activates a set of recommended lints for Flutter apps,
+# packages, and plugins designed to encourage good coding practices.
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  plugins:
+    - custom_lint
+  exclude:
+    - build/**
+    - lib/**.g.dart
+    - lib/**.freezed.dart
+    - lib/**/generated/**.dart
+  #    - tool/**.dart
+
+  language:
+    strict-raw-types: true
+    strict-inference: true
+    strict-casts: false
+
+
+  errors:
+    prefer_single_quotes: error
+    always_use_package_imports: error
+    always_declare_return_types: error
+    avoid_relative_lib_imports: error
+    annotate_overrides: error
+    avoid_init_to_null: error
+    use_full_hex_values_for_flutter_colors: error
+    require_trailing_commas: ignore
+    library_private_types_in_public_api: ignore
+    inference_failure_on_instance_creation: ignore
+    inference_failure_on_function_invocation: ignore
+    unused_element: warning
+    prefer_relative_imports: error
+    directives_ordering: error
+    prefer_final_locals: error
+    use_super_parameters: error
+
+
+linter:
+  # The lint rules applied to this project can be customized in the
+  # section below to disable rules from the `package:flutter_lints/flutter.yaml`
+  # included above or to enable additional rules. A list of all available lints
+  # and their documentation is published at
+  # https://dart-lang.github.io/linter/lints/index.html.
+  #
+  # Instead of disabling a lint rule for the entire project in the
+  # section below, it can also be suppressed for a single line of code
+  # or a specific dart file by using the `// ignore: name_of_lint` and
+  # `// ignore_for_file: name_of_lint` syntax on the line or in the file
+  # producing the lint.
+  rules:
+    prefer_single_quotes: true
+    prefer_relative_imports: true
+    always_use_package_imports: false
+    avoid_relative_lib_imports: true
+    always_declare_return_types: true
+    annotate_overrides: true
+    avoid_init_to_null: true
+    use_full_hex_values_for_flutter_colors: true
+    require_trailing_commas: true
+    empty_catches: false
+    directives_ordering: true
+    prefer_final_locals: false
+    use_super_parameters: true
+
+# Additional information about this file can be found at
+# https://dart.dev/guides/language/analysis-options
