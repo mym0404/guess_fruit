@@ -1,8 +1,8 @@
-# Gemini Game
+# Flutter Gemini Sample
 
-![screenshot 1](https://raw.githubusercontent.com/mym0404/image-archive/master/202403242251823.webp)
+<img src="https://raw.githubusercontent.com/mym0404/image-archive/master/202403250131299.webp" width=400/>
+<img src="https://raw.githubusercontent.com/mym0404/image-archive/master/202403250132231.gif" width=350/>
 
-![screenshot 2](https://raw.githubusercontent.com/mym0404/image-archive/master/202403242251172.webp)
 
 This is a Flutter project for integrating Google Gemini AI chat.
 
