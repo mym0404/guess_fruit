@@ -14,6 +14,7 @@ import '../../../../assets/assets.gen.dart';
 import '../../../../export.dart';
 import '../../../../main.dart';
 import '../../../core/hook/use_mount.dart';
+import '../../../core/util/char_limit_util.dart';
 import '../../../core/widget/background.dart';
 import '../../data/schema/chat_schema.dart';
 
@@ -60,7 +61,15 @@ class HomePage extends HookWidget {
 
     final subscription = useRef<StreamSubscription<dynamic>?>(null);
 
-    void onSubmitted(String text) {
+    void onSubmitted(String text) async {
+      if (!(await trySubmitAndCheckLimit())) {
+        if (context.mounted) {
+          context.showErrorSnackBar(
+              text: 'Your chat API usage limit has been exceeded.');
+        }
+        return;
+      }
+
       isStarted.value = true;
       isGenerating.value = true;
 

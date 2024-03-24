@@ -49,7 +49,7 @@ extension SnackBarExtension on BuildContext {
   void showErrorSnackBar({required String text, String? body}) {
     _showSnackBar(
       text: text,
-      icon: MdiIcons.emoticonCry,
+      icon: Icons.warning,
       backgroundColor: Colors.red.withOpacity(0.8),
       body: body,
     );
