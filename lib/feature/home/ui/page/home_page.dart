@@ -6,7 +6,6 @@ import 'package:flutter_highlighter/theme_map.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:markdown/markdown.dart' as md;
 import 'package:url_launcher/url_launcher.dart';
 
@@ -19,11 +18,11 @@ import '../../data/schema/chat_schema.dart';
 
 final ai = Gemini.instance;
 
-class HomePage extends HookConsumerWidget {
+class HomePage extends HookWidget {
   const HomePage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final isStarted = useState(false);
     final chats = useState(<ChatSchema>[]);
     final isGenerating = useState(false);
@@ -33,7 +32,7 @@ class HomePage extends HookConsumerWidget {
     void scrollToEnd() {
       doOnLayout(() {
         scroller.animateTo(scroller.position.maxScrollExtent,
-            duration: 500.ms, curve: Curves.easeOut);
+            duration: const Duration(milliseconds: 500), curve: Curves.easeOut);
       });
     }
 
@@ -72,7 +71,7 @@ class HomePage extends HookConsumerWidget {
           isFromUser: true,
         ),
         ChatSchema(
-          created: DateTime.now().add(1.milliseconds),
+          created: DateTime.now().add(const Duration(milliseconds: 1)),
           content: '',
           isFromUser: false,
         ),
@@ -332,7 +331,7 @@ class HighlightBuilder extends MarkdownElementBuilder {
   }
 }
 
-class BottomPanel extends HookConsumerWidget {
+class BottomPanel extends HookWidget {
   const BottomPanel({
     super.key,
     required this.onSubmitted,
@@ -343,7 +342,7 @@ class BottomPanel extends HookConsumerWidget {
   final bool readOnly;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final text = useTextEditingController();
     final focusNode = useFocusNode();
     final isFocused = useState(false);
@@ -362,7 +361,7 @@ class BottomPanel extends HookConsumerWidget {
     }
 
     return AnimatedContainer(
-      duration: 300.ms,
+      duration: const Duration(milliseconds: 300),
       padding: const EdgeInsets.all(1),
       decoration: BoxDecoration(
         borderRadius: 8.radius,

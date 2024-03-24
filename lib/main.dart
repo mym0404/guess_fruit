@@ -1,10 +1,9 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'export.dart';
 import 'feature/core/widget/app_scroll_behavior.dart';
-import 'service/router/app_router.dart';
+import 'feature/home/ui/page/home_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -40,7 +39,7 @@ Future<void> bootStrap() async {
 
   await registerSingletons();
   _registerErrorHandler();
-  runApp(const ProviderScope(child: BootStrapApp()));
+  runApp(const BootStrapApp());
 }
 
 void _registerErrorHandler() {
@@ -60,8 +59,8 @@ class BootStrapApp extends StatelessWidget with WatchItMixin {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      routerConfig: appRouter,
+    return MaterialApp(
+      home: const HomePage(),
       theme: AppTheme.instance.createTheme(Brightness.light),
       darkTheme: AppTheme.instance.createTheme(Brightness.dark),
       themeMode: ThemeMode.dark,
