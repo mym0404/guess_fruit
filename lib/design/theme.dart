@@ -1,5 +1,4 @@
 import '../export.dart';
-import 'color/theme_colors.dart';
 
 class AppTheme {
   static final AppTheme instance = AppTheme._internal();

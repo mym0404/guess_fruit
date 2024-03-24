@@ -81,7 +81,6 @@ class HomePage extends HookConsumerWidget {
         (event) {
           var isLastChatExist =
               chats.value.isNotEmpty && !chats.value.last.isFromUser;
-          print(event.output);
           if (event.output?.isNotEmpty == true) {
             if (isLastChatExist) {
               chats.value = [
@@ -107,7 +106,7 @@ class HomePage extends HookConsumerWidget {
           isGenerating.value = false;
           scrollToEnd();
         },
-        onError: (e) {
+        onError: (dynamic e) {
           handleError(chats.value.isNotEmpty && !chats.value.last.isFromUser);
           isGenerating.value = false;
           log.e('Error', error: e);
