@@ -42,6 +42,7 @@ analyzer:
     directives_ordering: error
     prefer_final_locals: error
     use_super_parameters: error
+    dead_null_aware_expression: ignore
 
 
 linter:

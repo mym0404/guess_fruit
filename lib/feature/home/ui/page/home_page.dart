@@ -14,7 +14,7 @@ import '../../../../assets/assets.gen.dart';
 import '../../../../export.dart';
 import '../../../../main.dart';
 import '../../../core/hook/use_mount.dart';
-import '../../../core/util/char_limit_util.dart';
+import '../../../core/util/chat_limit_util.dart';
 import '../../../core/widget/background.dart';
 import '../../data/schema/chat_schema.dart';
 
