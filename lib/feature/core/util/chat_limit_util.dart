@@ -18,7 +18,7 @@ Future<bool> trySubmitAndCheckLimit() async {
   }
 
   list.add(DateTime.now().millisecondsSinceEpoch);
-  list.slice(max(0, list.length - 10), list.length);
+  list = list.slice(max(0, list.length - 10), list.length);
 
   di<LocalStorage>().setString(_key, jsonEncode(list));
   return true;
