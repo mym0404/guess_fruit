@@ -14,6 +14,7 @@ import '../../../core/widget/background.dart';
 import '../../data/schema/chat_schema.dart';
 
 part '../widget/_bottom_panel.dart';
+part '../widget/_chat_item.dart';
 
 final ai = Gemini.instance;
 
@@ -203,8 +204,16 @@ class HomePage extends HookWidget {
                       ),
                     if (isLastItem && isGenerating.value)
                       Transform.translate(
-                        offset: const Offset(0, -20),
-                        child: Assets.lottie.ai.lottie(width: 128, height: 128),
+                        offset: const Offset(0, 20),
+                        child: Column(
+                          children: [
+                            Assets.lottie.ai.lottie(width: 80, height: 80),
+                            Text(
+                              'Waiting AI Response...',
+                              style: TS.b3.c(C.sub1),
+                            ),
+                          ],
+                        ),
                       ),
                   ],
                 );
@@ -243,77 +252,6 @@ class HomePage extends HookWidget {
           ),
         ],
       ),
-    );
-  }
-}
-
-class ChatItem extends StatelessWidget {
-  const ChatItem({
-    super.key,
-    required ChatSchema item,
-    required this.onReset,
-  }) : chat = item;
-
-  final ChatSchema chat;
-  final VC onReset;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      key: ValueKey(chat.created),
-      children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(999),
-          child: CircleAvatar(
-            radius: 16,
-            backgroundColor: C.black,
-            child: chat.isFromUser
-                ? Assets.images.logo.image()
-                : Icon(
-                    MdiIcons.robot,
-                    size: 20,
-                  ),
-          ),
-        ),
-        const Gap(20),
-        Expanded(
-            child: Pt(
-          6,
-          child: chat.isError
-              ? Column(
-                  children: [
-                    Text(
-                      chat.content,
-                      style: TS.c(C.error),
-                    ),
-                    TextButton(
-                        onPressed: () {
-                          onReset();
-                        },
-                        child: const Text('Reset')),
-                  ],
-                )
-              : FullW(
-                  child: MarkdownBody(
-                    selectable: true,
-                    data: chat.content ?? '',
-                    fitContent: true,
-                    shrinkWrap: true,
-                    onTapLink: (text, href, title) async {
-                      if (href == null) return;
-                      final uri = Uri.parse(href);
-                      if (await canLaunchUrl(uri)) launchUrl(uri);
-                    },
-                    builders: {
-                      'code': HighlightBuilder(),
-                    },
-                    styleSheet: MarkdownStyleSheet(
-                        codeblockDecoration: const BoxDecoration()),
-                  ),
-                ),
-        ))
-      ],
     );
   }
 }
