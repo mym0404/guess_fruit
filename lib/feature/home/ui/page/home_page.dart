@@ -202,17 +202,39 @@ class HomePage extends HookWidget {
                         onReset: reset,
                       ),
                     if (isLastItem && isGenerating.value)
-                      Transform.translate(
-                        offset: const Offset(0, 20),
-                        child: Column(
-                          children: [
-                            Assets.lottie.ai.lottie(width: 80, height: 80),
-                            Text(
-                              'Waiting AI Response...',
-                              style: TS.b3.c(C.sub1),
+                      HookBuilder(
+                        builder: (context) {
+                          final anim = useAnimationController(
+                              duration: const Duration(milliseconds: 1500));
+                          useMount(() {
+                            anim.forward();
+                          });
+                          return AnimatedBuilder(
+                            animation: anim,
+                            builder: (context, child) {
+                              return Transform.translate(
+                                offset: Offset(0, 25 + (-25 * anim.value)),
+                                child: Opacity(
+                                  opacity: anim.value,
+                                  child: child,
+                                ),
+                              );
+                            },
+                            child: Transform.translate(
+                              offset: const Offset(0, 20),
+                              child: Column(
+                                children: [
+                                  Assets.lottie.ai
+                                      .lottie(width: 80, height: 80),
+                                  Text(
+                                    'Waiting AI Response...',
+                                    style: TS.b3.c(C.sub1),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ],
-                        ),
+                          );
+                        },
                       ),
                   ],
                 );

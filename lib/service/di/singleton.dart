@@ -9,13 +9,13 @@ Future<void> registerSingletons() async {
   di.registerSingleton(LocalStorage(sp));
   di.registerSingleton(
     Logger(
-      printer: PrefixPrinter(
-        PrettyPrinter(
-          colors: false,
-        ),
-        error: '⛔',
-        info: '💡',
-        debug: '🌙',
+      printer: PrettyPrinter(
+        colors: true,
+        lineLength: 40,
+        printEmojis: false,
+        printTime: false,
+        methodCount: 1,
+        errorMethodCount: 5,
       ),
     ),
   );

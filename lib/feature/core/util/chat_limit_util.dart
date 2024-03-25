@@ -15,8 +15,6 @@ Future<bool> trySubmitAndCheckLimit() async {
   }
   list = list.slice(max(0, list.length - limitCount), list.length);
 
-  log.i(list);
-
   if (list.length >= limitCount &&
       list[0] > DateTime.now().millisecondsSinceEpoch - delayMs) {
     await di<LocalStorage>().setString(_key, jsonEncode(list));
