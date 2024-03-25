@@ -1,7 +1,7 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_gemini/flutter_gemini.dart';
 
 import 'export.dart';
+import 'feature/core/util/gemini.dart';
 import 'feature/core/widget/app_scroll_behavior.dart';
 import 'feature/home/ui/page/home_page.dart';
 
@@ -11,31 +11,9 @@ void main() async {
   await bootStrap();
 }
 
-final safetySettings = [
-  SafetySetting(
-    category: SafetyCategory.dangerous,
-    threshold: SafetyThreshold.blockNone,
-  ),
-  SafetySetting(
-    category: SafetyCategory.harassment,
-    threshold: SafetyThreshold.blockNone,
-  ),
-  SafetySetting(
-    category: SafetyCategory.hateSpeech,
-    threshold: SafetyThreshold.blockNone,
-  ),
-  SafetySetting(
-    category: SafetyCategory.sexuallyExplicit,
-    threshold: SafetyThreshold.blockNone,
-  ),
-];
-
 Future<void> bootStrap() async {
   await dotenv.load(fileName: '.env');
-  Gemini.init(
-      apiKey: (dotenv.env['GEMINI_KEY'] ?? ''),
-      enableDebugging: false,
-      safetySettings: safetySettings);
+  initGemini();
 
   await registerSingletons();
   _registerErrorHandler();

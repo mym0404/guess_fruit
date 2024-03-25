@@ -1,22 +1,19 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
-import 'package:flutter_highlighter/flutter_highlighter.dart';
-import 'package:flutter_highlighter/theme_map.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:markdown/markdown.dart' as md;
 import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import '../../../../assets/assets.gen.dart';
 import '../../../../export.dart';
-import '../../../../main.dart';
 import '../../../core/hook/use_mount.dart';
 import '../../../core/util/chat_limit_util.dart';
+import '../../../core/util/gemini.dart';
+import '../../../core/util/highlight_builder.dart';
 import '../../../core/widget/background.dart';
 import '../../data/schema/chat_schema.dart';
+
+part '../widget/_bottom_panel.dart';
 
 final ai = Gemini.instance;
 
@@ -50,9 +47,7 @@ class HomePage extends HookWidget {
       isStarted.value = false;
       chats.value = [];
       isGenerating.value = false;
-      Gemini.reInitialize(
-          apiKey: (dotenv.env['GEMINI_KEY'] ?? ''),
-          safetySettings: safetySettings);
+      resetGemini();
     }
 
     void handleError() {
@@ -209,13 +204,7 @@ class HomePage extends HookWidget {
                     if (isLastItem && isGenerating.value)
                       Transform.translate(
                         offset: const Offset(0, -20),
-                        child: ShaderMask(
-                          child: const CupertinoActivityIndicator(),
-                          shaderCallback: (bounds) {
-                            return LinearGradient(colors: [C.red400, C.blue400])
-                                .createShader(bounds);
-                          },
-                        ),
+                        child: Assets.lottie.ai.lottie(width: 128, height: 128),
                       ),
                   ],
                 );
@@ -324,164 +313,6 @@ class ChatItem extends StatelessWidget {
                   ),
                 ),
         ))
-      ],
-    );
-  }
-}
-
-class HighlightBuilder extends MarkdownElementBuilder {
-  HighlightBuilder();
-
-  @override
-  Widget visitElementAfter(md.Element element, TextStyle? preferredStyle) {
-    final textStyle = GoogleFonts.ubuntuMono(
-      backgroundColor: Colors.transparent,
-      fontWeight: FontWeight.w400,
-    );
-
-    var language = 'java';
-    final pattern = RegExp(r'^language-(.+)$');
-    if (element.attributes['class'] != null &&
-        pattern.hasMatch(element.attributes['class']!)) {
-      language =
-          pattern.firstMatch(element.attributes['class']!)!.group(1) ?? 'java';
-    }
-
-    bool isInline = element.attributes['class'] == null;
-
-    if (isInline) {
-      return Text(element.textContent);
-    }
-
-    return HighlightView(
-      element.textContent.trim(),
-      language: language,
-      theme: themeMap['dracula']!,
-      padding: isInline
-          ? const EdgeInsets.symmetric(
-              vertical: 4,
-              horizontal: 6,
-            )
-          : const EdgeInsets.all(12),
-      textStyle: textStyle,
-    );
-  }
-}
-
-class BottomPanel extends HookWidget {
-  const BottomPanel({
-    super.key,
-    required this.onSubmitted,
-    required this.readOnly,
-  });
-
-  final void Function(String) onSubmitted;
-  final bool readOnly;
-
-  @override
-  Widget build(BuildContext context) {
-    final text = useTextEditingController();
-    final focusNode = useFocusNode();
-    final isFocused = useState(false);
-
-    focusNode.addListener(() {
-      isFocused.value = focusNode.hasFocus;
-    });
-
-    void submit() {
-      if (readOnly) {
-        return;
-      }
-      onSubmitted(text.text);
-      text.text = '';
-      focusNode.requestFocus();
-    }
-
-    return Column(
-      children: [
-        AnimatedContainer(
-          duration: const Duration(milliseconds: 150),
-          padding: const EdgeInsets.all(1),
-          decoration: BoxDecoration(
-            borderRadius: 8.radius,
-            gradient: LinearGradient(
-              colors: [
-                !focusNode.hasFocus ? C.grey800 : C.primary,
-                !focusNode.hasFocus ? C.grey800 : C.error
-              ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-          ),
-          child: ClipRRect(
-            borderRadius: 8.radius,
-            child: Container(
-              padding: const EdgeInsets.all(7),
-              decoration: const BoxDecoration(color: C.surface),
-              child: Stack(
-                children: [
-                  Px(
-                    8,
-                    child: TextField(
-                      readOnly: readOnly,
-                      controller: text,
-                      onSubmitted: (_) => submit(),
-                      focusNode: focusNode,
-                      decoration: const InputDecoration(
-                          border: InputBorder.none,
-                          isDense: true,
-                          focusColor: Colors.red,
-                          hintText: 'Ask AI anything...'),
-                      cursorColor: C.text,
-                      style: TS.b3,
-                    ),
-                  ),
-                  PosRight(
-                    right: 12,
-                    child: ValueListenableBuilder(
-                      valueListenable: text,
-                      builder: (context, newText, _) {
-                        return IconButton(
-                          icon: Icon(
-                              readOnly ? MdiIcons.circle : MdiIcons.sendOutline,
-                              size: 16),
-                          style: const ButtonStyle(
-                              padding:
-                                  MaterialStatePropertyAll(EdgeInsets.zero)),
-                          onPressed: newText.text.isNotEmpty ? submit : null,
-                        );
-                      },
-                    ),
-                  )
-                ],
-              ),
-            ),
-          ),
-        ),
-        const Gap(12),
-        Row(
-          children: [
-            TextButton.icon(
-              onPressed: () {
-                launchUrlString('https://github.com/mym0404/guess_fruit');
-              },
-              label: const Text('Github'),
-              icon: Icon(MdiIcons.github, size: 16),
-              style: ButtonStyle(
-                  foregroundColor: MaterialStateProperty.all(C.white)),
-            ),
-            const Gap(0),
-            TextButton(
-              onPressed: () {
-                launchUrlString('https://mjstudio.net');
-              },
-              style: ButtonStyle(
-                foregroundColor: MaterialStateProperty.all(C.white),
-              ),
-              child: Text('© ${DateTime.now().year} MJ Studio'),
-            ),
-          ],
-        ),
       ],
     );
   }
