@@ -139,39 +139,7 @@ class HomePage extends HookWidget {
             child: Background(),
           ),
           if (!isStarted.value)
-            PosCenter(
-              child: Pb(
-                120,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    AnimatedBuilder(
-                      animation: scaleValue,
-                      builder: (context, _) {
-                        return Opacity(
-                          opacity: scaleValue.value - 0.15,
-                          child: Transform.scale(
-                            scale: scaleValue.value,
-                            child: Icon(MdiIcons.lightbulbOnOutline, size: 64),
-                          ),
-                        );
-                      },
-                    ),
-                    const Gap(16),
-                    Text('Ask AI Anything', style: TS.h1.bold),
-                    const Gap(8),
-                    Text(
-                      '''
-- How can we enjoy happy leisure time? 
-- What is Google Gemini?
-                      ''',
-                      textAlign: TextAlign.center,
-                      style: TS.c(C.sub1),
-                    ),
-                  ],
-                ),
-              ),
-            )
+            builldReadyPanel(scaleValue)
           else
             ListView.separated(
               itemCount: chats.value.length,
@@ -244,34 +212,79 @@ class HomePage extends HookWidget {
               padding: const EdgeInsets.only(
                   left: 20, right: 20, top: 24, bottom: 180),
             ),
-          PosBottom(
-            child: IgnorePointer(
-              child: Container(
-                height: 150,
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      C.transparent,
-                      Color(0xFF1b212b),
-                    ],
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    stops: [0.2, 1],
-                  ),
-                ),
-              ),
-            ),
-          ),
-          Positioned(
-            bottom: 16,
-            left: 24,
-            right: 24,
-            child: BottomPanel(
-              onSubmitted: onSubmitted,
-              readOnly: isGenerating.value,
-            ),
-          ),
+          buildBottomPanel(),
+          buildBottomGradient(onSubmitted, isGenerating),
         ],
+      ),
+    );
+  }
+
+  PosCenter builldReadyPanel(Animation<double> scaleValue) {
+    return PosCenter(
+      child: Pb(
+        120,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            AnimatedBuilder(
+              animation: scaleValue,
+              builder: (context, _) {
+                return Opacity(
+                  opacity: scaleValue.value - 0.15,
+                  child: Transform.scale(
+                    scale: scaleValue.value,
+                    child: Icon(MdiIcons.lightbulbOnOutline, size: 64),
+                  ),
+                );
+              },
+            ),
+            const Gap(16),
+            Text('Ask AI Anything', style: TS.h1.bold),
+            const Gap(8),
+            Text(
+              '''
+- How can we enjoy happy leisure time? 
+- What is Google Gemini?
+                    ''',
+              textAlign: TextAlign.center,
+              style: TS.c(C.sub1),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildBottomPanel() {
+    return PosBottom(
+      child: IgnorePointer(
+        child: Container(
+          height: 150,
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                C.transparent,
+                Color(0xFF1b212b),
+              ],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              stops: [0.2, 1],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildBottomGradient(void Function(String text) onSubmitted,
+      ValueNotifier<bool> isGenerating) {
+    return Positioned(
+      bottom: 16,
+      left: 24,
+      right: 24,
+      child: BottomPanel(
+        onSubmitted: onSubmitted,
+        readOnly: isGenerating.value,
       ),
     );
   }
