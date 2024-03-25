@@ -2,9 +2,8 @@
 
 [Online Demo](https://guess-fruit.vercel.app/)
 
-<img src="https://raw.githubusercontent.com/mym0404/image-archive/master/202403250131299.webp" width=400/>
-<img src="https://raw.githubusercontent.com/mym0404/image-archive/master/202403250132231.gif" width=350/>
-
+<img src="https://raw.githubusercontent.com/mym0404/image-archive/master/202403251754162.webp" width=400/>
+<img src="https://raw.githubusercontent.com/mym0404/image-archive/master/202403251754305.gif" width=400/>
 
 This is a Flutter project for integrating Google Gemini AI chat.
 
