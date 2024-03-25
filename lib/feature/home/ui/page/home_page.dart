@@ -242,7 +242,7 @@ class HomePage extends HookWidget {
               separatorBuilder: (context, index) => const Gap(16),
               controller: scroller,
               padding: const EdgeInsets.only(
-                  left: 20, right: 20, top: 24, bottom: 140),
+                  left: 20, right: 20, top: 24, bottom: 180),
             ),
           PosBottom(
             child: IgnorePointer(
