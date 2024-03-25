@@ -39,8 +39,7 @@ class HomePage extends HookWidget {
 
     void scrollToEnd() {
       doOnLayout(() {
-        scroller.animateTo(scroller.position.maxScrollExtent,
-            duration: const Duration(milliseconds: 500), curve: Curves.easeOut);
+        scroller.jumpTo(scroller.position.maxScrollExtent);
       });
     }
 

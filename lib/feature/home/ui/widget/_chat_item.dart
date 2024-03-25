@@ -31,28 +31,25 @@ class ChatItem extends StatelessWidget {
         ),
         const Gap(20),
         Expanded(
-            child: Pt(
-          6,
-          child: chat.isError
-              ? Column(
-                  children: [
-                    Text(
-                      chat.content,
-                      style: TS.c(C.error),
-                    ),
-                    TextButton(
-                        onPressed: () {
-                          onReset();
-                        },
-                        child: const Text('Reset')),
-                  ],
-                )
-              : FullW(
-                  child: MarkdownBody(
+          child: Pt(
+            6,
+            child: chat.isError
+                ? Column(
+                    children: [
+                      Text(
+                        chat.content,
+                        style: TS.c(C.error),
+                      ),
+                      TextButton(
+                          onPressed: () {
+                            onReset();
+                          },
+                          child: const Text('Reset')),
+                    ],
+                  )
+                : MarkdownBody(
                     selectable: true,
                     data: chat.content ?? '',
-                    fitContent: true,
-                    shrinkWrap: true,
                     onTapLink: (text, href, title) async {
                       if (href == null) return;
                       final uri = Uri.parse(href);
@@ -61,11 +58,9 @@ class ChatItem extends StatelessWidget {
                     builders: {
                       'code': HighlightBuilder(),
                     },
-                    styleSheet: MarkdownStyleSheet(
-                        codeblockDecoration: const BoxDecoration()),
                   ),
-                ),
-        ))
+          ),
+        )
       ],
     );
   }
